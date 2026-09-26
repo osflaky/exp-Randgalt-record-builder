@@ -1,0 +1,32 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Maven Build - Java 17
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: macos-latest
+          arch: arm64
+          runner: macos-latest
+          expander_leg: macos-latest--arm64
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: zulu
+        java-version: 17
+    - name: Build with Maven
+      run: ./mvnw -P lomboktests -B package --file pom.xml
+    name: build [${{ matrix.expander_leg }}]
+    timeout-minutes: 150
